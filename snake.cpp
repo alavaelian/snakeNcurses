@@ -300,6 +300,7 @@ int main (int argc, char *argv[]) {
   setlocale(LC_CTYPE, "");
   snakeInitialization();  // moving cursor, x = 20, y = 10
   initscr();
+  curs_set(0);
   while (Game == 0) {
     print();
     ResetScreenPosition();
