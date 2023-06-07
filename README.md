@@ -6,6 +6,8 @@ first you need to install the ncurses develoment library you can do that in debi
 
 sudo apt-get install libncurses5-dev libncursesw5-dev
 
+also you will need a nerd patched font and the emoji noto font no see the game rendered in the terminal
+
 and for compiling it you need use:
 
 g++ snake.cpp -o snake -lncursesw
