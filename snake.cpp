@@ -35,6 +35,7 @@ void snakeInitialization(){
   var = 0;
   dir = 'd';
   score = 0;
+  speed=99;
   for(i=0;i<Head;i++)
   {
     gy++;
