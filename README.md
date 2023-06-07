@@ -19,4 +19,5 @@ and for excecuting it just need to do an:
 ./snake 
 
 into a terminal
+
 gracias  a paddy en stack overflow, que me ayudo a solucionar un bug.
