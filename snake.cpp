@@ -11,7 +11,7 @@
 #include <errno.h>
 #define N 20
 #define M 40
-int i,j,Field[N][M],x,y,gy,Head,Tail,Game,Frogs,a ,b,var,dir,score,HighScore=0,speed=99;
+int i,j,Field[N][M],x,y,gy,Head,Tail,Game,Frogs,a ,b,var,dir,score,HighScore=0,speed=150;
 FILE *f;
 void snakeInitialization(){
   f=fopen("highscore.txt","r+");
@@ -35,7 +35,7 @@ void snakeInitialization(){
   var = 0;
   dir = 'd';
   score = 0;
-  speed=99;
+  speed=150;
   for(i=0;i<Head;i++)
   {
     gy++;
@@ -157,7 +157,7 @@ void Random (){
     Field[a][b] = -1;
     Frogs = 1;
     if(speed>10 && score!=0){
-      speed = speed -5;
+      speed = speed -2;
     }
   }
 }
