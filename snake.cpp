@@ -35,7 +35,7 @@ void snakeInitialization(){
   var = 0;
   dir = 'd';
   score = 0;
-  speed=150;
+  speed = 150;
   for(i=0;i<Head;i++)
   {
     gy++;
@@ -95,7 +95,7 @@ void print()
   wchar_t LUC = 0x2554;//left up corner simbol
   wchar_t HS = 0x2593;
   wchar_t BS = 0x2591;
-  wchar_t Frg = 0x29EB;//frog
+  wchar_t Frg = 0x101EF;//frog
   // wprintf(L"unicode code  255A prints  %lc\n", LDC);
   // wprintf(L"unicode code 2551 prints %lc\n",VW);
   // wprintf(L"unicode code 2550 prints %lc\n",HW);
@@ -124,10 +124,16 @@ void print()
     printw("%lc",VW);
     for (j=0;j<M;j++)
     {
-      if(Field[i][j]==0) printw(" ");
+      if(Field[i][j]==0){
+      printw(" ");
+      } 
       if(Field[i][j]>0&&Field[i][j]!=Head) printw("%lc",BS);
       if(Field[i][j]==Head) printw("%lc",HS);
-      if(Field[i][j]==-1) printw("%lc",Frg);
+      if(Field[i][j]==-1){
+        printw("%lc",Frg);
+        // this one was used when the unicode caracter uses more than one position in widej++;
+      } 
+      
       if(j==M-1) printw("%lc\n",VW);
     }
   }
@@ -179,7 +185,7 @@ void GameOver(){
     mvprintw(N/2, M/2, " New HighScore %d !!!! \n\n",score);
     refresh();
     getch();
-    f=fopen("highscore.txt", "w+");
+    f=fopen("highscore.txt", "w");
     rewind(f);
     fprintf(f, "%d", score);
     fclose(f);
@@ -238,7 +244,7 @@ void movement(){
       GameOver();
     }
 
-       if(Field[x][y]==-1){
+       if(Field[x][y]==-1 ){
       Frogs=0;
       score += 5;
       Tail -= 2;
@@ -248,6 +254,7 @@ void movement(){
     Field[x][y]=Head;
   }
   if (dir == 'w'){
+
     x--;
     if(x==-1){
       x=N-1;
@@ -257,7 +264,7 @@ void movement(){
     }
 
     
-  if(Field[x][y]==-1){
+  if(Field[x][y]==-1  ){
       Frogs=0;
       score += 5;
       Tail -= 2;
