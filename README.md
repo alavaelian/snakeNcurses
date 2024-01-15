@@ -12,7 +12,7 @@ and for compiling it you need use:
 
 g++ snake.cpp -o snake -lncursesw
 
-i linked the "w" version of ncurses becose it the one that have compability with the unicode characters that i used.
+i linked the "w" version of ncurses because it the one that have compability with the unicode characters that i used.
 and before running it you will need to create a highscore.txt file to write the high score if you dont you will get an error and the game will not start
 for running it just need to do an:
 
