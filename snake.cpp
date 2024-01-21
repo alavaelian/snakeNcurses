@@ -1,25 +1,32 @@
 #include <cctype>
 #include <cstdlib>
-#include <curses.h>
+#include <sys/ioctl.h>
+#include <ncursesw/cursesw.h>
+#include <ncursesw/curses.h>
 #include <stdio.h>
 #include <wchar.h>
 #include <locale.h>
 #include <stdlib.h>
-#include <ncurses.h>
+#include <ncursesw/ncurses.h>
 #include <ctime>
 #include <time.h>
 #include <errno.h>
+#include <cmath>
+
 #define N 20
 #define M 40
-int i,j,Field[N][M],x,y,gy,Head,Tail,Game,Frogs,a ,b,var,dir,score,HighScore=0,speed=150;
+
+int Field[N][M],x,y,gy,Head,Tail,Game,Frogs,var,dir,score,HighScore=0,speed=150;
+
+
 FILE *f;
 void snakeInitialization(){
   f=fopen("highscore.txt","r+");
     rewind(f);
   fscanf(f,"%d",&HighScore);
   fclose(f);
-  for(i=0;i<N;i++){
-    for(j=0;j<M;j++){
+  for(int i=0;i<N;i++){
+    for(int j=0;j<M;j++){
       Field [i][j]=0;
     }
   }
@@ -30,13 +37,11 @@ void snakeInitialization(){
   gy=y;
   Game = 0;
   Frogs = 0;
-  a = 0;
-  b = 0;
   var = 0;
   dir = 'd';
   score = 0;
   speed = 150;
-  for(i=0;i<Head;i++)
+  for(int i=0;i<Head;i++)
   {
     gy++;
     Field[x][gy-Head]=i+1;
@@ -95,7 +100,8 @@ void print()
   wchar_t LUC = 0x2554;//left up corner simbol
   wchar_t HS = 0x2593;
   wchar_t BS = 0x2591;
-  wchar_t Frg = 0x101EF;//frog
+  //wchar_t Frg = 0x101EF;//frog
+  wchar_t Frg = 0x1F425;
   // wprintf(L"unicode code  255A prints  %lc\n", LDC);
   // wprintf(L"unicode code 2551 prints %lc\n",VW);
   // wprintf(L"unicode code 2550 prints %lc\n",HW);
@@ -104,7 +110,7 @@ void print()
 
   // printf ("asscii of 188 gives: %c\n\n",188);
   // printf("%c", 65);
-  for (i=0;i<=M+1;i++)
+  for (int i=0;i<=M+1;i++)
   {
     if(i==0)
     {
@@ -119,25 +125,50 @@ void print()
   }
   printw( "Current Score: %d | HighScore: %d",score,HighScore);
   printw("\n");
-  for(i=0;i<N;i++)
+  for(int i=0;i<N;i++)
   {
     printw("%lc",VW);
-    for (j=0;j<M;j++)
+    for (int j=0;j<M;j++)
     {
       if(Field[i][j]==0){
       printw(" ");
       } 
+    
       if(Field[i][j]>0&&Field[i][j]!=Head) printw("%lc",BS);
-      if(Field[i][j]==Head) printw("%lc",HS);
+      if(Field[i][j]==Head)
+      {
+		  int red=0;
+		  if(Frogs==0){
+			  attron(COLOR_PAIR(1));
+			  printw("%lc",HS);
+			  attroff(COLOR_PAIR(1));
+			  red=1;
+			  }
+			  if(red==0)printw("%lc",HS);
+	   }
+	  
+	   
+       
       if(Field[i][j]==-1){
-        printw("%lc",Frg);
+// Ajusta la posición de impresión antes de imprimir el carácter grande
+          
+        cchar_t wch;
+
+         setcchar(&wch, L"\U000101EF", A_NORMAL, 0, NULL);
+ add_wch(&wch);
+         
+        //printw("%lc",Frg);
+   
+       
         // this one was used when the unicode caracter uses more than one position in widej++;
       } 
+     
       
       if(j==M-1) printw("%lc\n",VW);
     }
+    
   }
-  for (i=0;i<=M+1;i++)
+  for (int i=0;i<=M+1;i++)
   {
     if(i==0)
     {
@@ -157,8 +188,8 @@ void ResetScreenPosition(){
 }
 void Random (){
   srand(time(0));
-  a = 1 + rand() % 18;
-  b = 1 + rand() % 38;
+  int a = 1 + rand() % 18;
+  int b = 1 + rand() % 38;
   if (Frogs == 0 && Field[a][b]==0) {
     Field[a][b] = -1;
     Frogs = 1;
@@ -215,7 +246,11 @@ void movement(){
   var = getch_noblock();
   var = tolower(var);
   if (((var == 'd' || var == 'a') || (var == 'w' || var == 's')) &&( abs(dir-var)>5)){
+
+
+
     dir=var; 
+
   }
   if (dir == 'd'){
     y++;
@@ -223,7 +258,7 @@ void movement(){
       y=0;
     }
 
-    if(Field[x][y]!=0 && Field[x][y]!=-1){
+    if (Field[x][y]!=0 && Field[x][y]!=-1) {
       GameOver();
     }
     if(Field[x][y]==-1){
@@ -240,11 +275,11 @@ void movement(){
       y=M-1;
     }
 
-    if(Field[x][y]!=0 && Field[x][y]!=-1){
+    if (Field[x][y]!=0 && Field[x][y]!=-1) {
       GameOver();
     }
 
-       if(Field[x][y]==-1 ){
+       if(Field[x][y] == -1 ){
       Frogs=0;
       score += 5;
       Tail -= 2;
@@ -256,15 +291,16 @@ void movement(){
   if (dir == 'w'){
 
     x--;
+
     if(x==-1){
       x=N-1;
     }
-    if(Field[x][y]!=0 && Field[x][y]!=-1){
+    if (Field[x][y]!=0 && Field[x][y]!=-1) {
       GameOver();
     }
 
     
-  if(Field[x][y]==-1  ){
+  if(Field[x][y] == -1 ){
       Frogs=0;
       score += 5;
       Tail -= 2;
@@ -279,11 +315,11 @@ void movement(){
       x=0;
     }
 
-    if(Field[x][y]!=0 && Field[x][y]!=-1){
+   if (Field[x][y]!=0 && Field[x][y]!=-1) {
       GameOver();
     }
 
-       if(Field[x][y]==-1){
+       if(Field[x][y] == -1){
       Frogs=0;
       score += 5;
       Tail -= 2;
@@ -294,8 +330,8 @@ void movement(){
   }
 }
 void TailRemove(){
-  for(i=0;i<N;i++){
-    for (j=0; j<M; j++) {
+  for(int i=0;i<N;i++){
+    for (int j=0; j<M; j++) {
       if (Field[i][j]==Tail) {
         Field[i][j] = 0;
       }
@@ -307,6 +343,8 @@ int main (int argc, char *argv[]) {
   setlocale(LC_CTYPE, "");
   snakeInitialization();  // moving cursor, x = 20, y = 10
   initscr();
+  start_color(); 
+  init_pair(1, COLOR_RED, COLOR_BLACK);
   curs_set(0);
   while (Game == 0) {
     print();
@@ -314,7 +352,8 @@ int main (int argc, char *argv[]) {
     Random();
     movement();
     TailRemove();
-    msleep(speed);
+    //msleep(speed);
+    msleep(speed + (dir == 'w' || dir == 's' ? (int)(speed * 0.37) : 0));
     refresh();
 
   }
