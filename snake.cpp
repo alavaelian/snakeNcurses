@@ -69,6 +69,13 @@ int kbhit(void)    /* comment */
     nodelay(stdscr, FALSE);
     return(r);
 }
+int logaritmicVerticalSpeed(int speed) {
+    // Ajusta la velocidad vertical utilizando una función logarítmica
+    double logSpeed = log(speed + 1); // Aplicamos el logaritmo para suavizar el movimiento
+    // Convertimos de nuevo a entero y retornamos
+    return static_cast<int>(logSpeed);
+}
+
 int msleep(long msec)
 {
     struct timespec ts;
@@ -353,7 +360,10 @@ int main (int argc, char *argv[]) {
     movement();
     TailRemove();
     //msleep(speed);
-    msleep(speed + (dir == 'w' || dir == 's' ? (int)(speed * 0.37) : 0));
+    int adjustedSpeed = speed + (dir == 'w' || dir == 's' ? logaritmicVerticalSpeed(speed) : 0);
+    msleep(adjustedSpeed);
+
+    //msleep(speed + (dir == 'w' || dir == 's' ? (int)(speed * 0.37) : 0));
     refresh();
 
   }
