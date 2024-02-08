@@ -69,12 +69,6 @@ int kbhit(void)    /* comment */
     nodelay(stdscr, FALSE);
     return(r);
 }
-int logaritmicVerticalSpeed(int speed) {
-    // Ajusta la velocidad vertical utilizando una función logarítmica
-    double logSpeed = log(speed + 1); // Aplicamos el logaritmo para suavizar el movimiento
-    // Convertimos de nuevo a entero y retornamos
-    return static_cast<int>(logSpeed);
-}
 
 int msleep(long msec)
 {
@@ -96,7 +90,11 @@ int msleep(long msec)
 
     return res;
 }
-
+int interpolateSpeed(int y) {
+    // Ajusta esta función según tus necesidades
+    // Aquí hay un ejemplo básico que disminuye la velocidad gradualmente a medida que la serpiente se mueve hacia arriba
+return 150 + (y * 3); // Aumenta la velocidad linealmente con la posición vertical
+}
 void print()
 {
   wchar_t RDC = 0x255D;//right down corner simbol
@@ -260,6 +258,7 @@ void movement(){
 
   }
   if (dir == 'd'){
+   speed = 150; 
     y++;
     if(y==M-1){
       y=0;
@@ -277,6 +276,7 @@ void movement(){
     Field[x][y]=Head;
   }
   if (dir == 'a'){
+  speed = 150; 
     y--;
     if(y==0){
       y=M-1;
@@ -296,7 +296,7 @@ void movement(){
     Field[x][y]=Head;
   }
   if (dir == 'w'){
-
+ speed = interpolateSpeed(y);
     x--;
 
     if(x==-1){
@@ -317,6 +317,7 @@ void movement(){
     Field[x][y]=Head;
   }
   if (dir == 's'){
+ speed = interpolateSpeed(y);
     x++;
     if(x==N){
       x=0;
@@ -359,9 +360,11 @@ int main (int argc, char *argv[]) {
     Random();
     movement();
     TailRemove();
-    //msleep(speed);
-    int adjustedSpeed = speed + (dir == 'w' || dir == 's' ? logaritmicVerticalSpeed(speed) : 0);
-    msleep(adjustedSpeed);
+    msleep(speed);
+    //msleep(speed + (dir == 'w' || dir == 's' ? (int)(speed * log((double)x + 1) / log(N + 1)) : 0));
+//double decay = 0.8; // Valor entre 0 y 1, cuanto más cercano a 1, más gradual es el decaimiento
+//int vertical_speed = (int)(speed * pow(decay, x / (double)N));
+//msleep(speed + (dir == 'w' || dir == 's' ? vertical_speed : 0));
 
     //msleep(speed + (dir == 'w' || dir == 's' ? (int)(speed * 0.37) : 0));
     refresh();
